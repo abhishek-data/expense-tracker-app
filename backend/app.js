@@ -8,14 +8,14 @@ const authRoutes = require('./routes/auth')
 
 const app = express()
 app.use(express.json())
-app.use(cors)
+app.use(cors())
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(authRoutes)
 
 const PORT = process.env.PORT || 5000
 
 sequelize
-    // .sync({force: true})
+    // .sync({ force: true })
     .sync()
     .then(() => {
         app.listen(PORT, () => {

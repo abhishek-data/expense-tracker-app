@@ -11,11 +11,14 @@ const Login = () => {
     try {
       if (haveAccount) {
         const response = await axios.post(`${API_URL}/login`, value)
+        console.log(response);
+        message.success(`welcome! ${response.data.message}`)
+
       } else {
         const response = await axios.post(`${API_URL}/signup`, value)
+        message.success(`welcome! ${response.data.message}`)
 
       }
-      message.success(`welcome! you have sucessfully ${haveAccount ? "logged in." : "singned up."}`)
 
     } catch (error) {
       message.error(error.message)
@@ -30,7 +33,7 @@ const Login = () => {
           <Input placeholder='Enter Your FullName' />
         </Form.Item>}
         <Form.Item name='email' rules={[{ required: true, message: "Please Enter Valid Email" }]}>
-          <Input placeholder='Enter Your Email' type='email'/>
+          <Input placeholder='Enter Your Email' type='email' />
         </Form.Item>
         <Form.Item name='password' rules={[{ required: true, message: "Please Enter Valid Password" }]}>
           <Input.Password placeholder='Enter Your Password' />

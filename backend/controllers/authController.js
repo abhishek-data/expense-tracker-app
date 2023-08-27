@@ -1,34 +1,39 @@
 const User = require('../models/user')
-
-exports.login = async (req, res, next) => {
-    try {
-       const {email, password} = req.body 
-       const user = await User.findOne({where:{email}})
-        if(!user) {
-            return res.status(401).json({error: 'Invalid credentials'})
-        }
-       const passwordMatch = await User.findOne({where:{email}})
-       if(!passwordMatch) {
-        return res.status(401).json({error: 'Invalid credentials'})
-        }
-        res.status(200).json({message: 'Login sucessful'})
-    }catch(err) {
-        console.log(err);
-        res.status(500).json({error: 'Internal server error'})
-    }
-}
+const bcrypt = require('bcrypt')
 
 exports.signup = async (req, res, next) => {
     try {
-        const {fullname, email,password } = req.body
-        const user = await User.create({
-            fullname,
-            email,
-            password
+        const { fullname, email, password } = req.body
+        const emailMatch = await User.findOne({ where: { email } })
+        if (emailMatch) {
+            return res.status(409).json({ message: 'A account is already exits with this email.' })
+        }
+        bcrypt.hash(password, 10, async (err, hash) => {
+            await User.create({fullname, email,password: hash})
+            res.status(201).json({ message: 'You have sucessfully signed-up' })
+
         })
-        res.status(201).json({message: 'You have sucessfully signed-up'})
-    }catch(err) {
-        console.log(err);
-        res.status(500).json({error:'Internal server error'})
+
+    } catch (err) {
+        res.status(500).json({ error: 'Internal server error' })
     }
 }
+
+exports.login = async (req, res, next) => {
+    try {
+        const { email, password } = req.body
+        const user = await User.findOne({ where: { email } })
+        if (!user) {
+            return res.status(401).json({ error: 'Invalid credentials' })
+        }
+        const passwordMatch = await bcrypt.compare(password, user.password)
+        if (!passwordMatch) {
+            return res.status(401).json({ error: 'Invalid credentials' })
+        }
+        res.status(200).json({ message: 'You have sucessfully logged-in' })
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ error: 'Internal server error' })
+    }
+}
+
