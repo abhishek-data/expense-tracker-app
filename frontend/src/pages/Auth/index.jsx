@@ -2,20 +2,20 @@ import React, { useState } from 'react'
 import axios from 'axios'
 import { Button, Divider, Form, Input, Typography, message } from 'antd';
 import { API_URL } from '../../util/config';
-const Login = () => {
+const Login = ({setIsLoggin}) => {
 
   const [haveAccount, setHaveAccount] = useState(false)
 
   const loginHandler = async (value) => {
-    console.log(value);
     try {
       if (haveAccount) {
         const response = await axios.post(`${API_URL}/login`, value)
-        console.log(response);
+        setIsLoggin(true)
         message.success(`welcome! ${response.data.message}`)
 
       } else {
         const response = await axios.post(`${API_URL}/signup`, value)
+        setHaveAccount(true)
         message.success(`welcome! ${response.data.message}`)
 
       }

@@ -1,14 +1,21 @@
+import { useState } from 'react'
 import './App.css'
-import Header from './components/Header'
+import AppHeader from './components/Header'
 import Login from './pages/Auth'
+import AddExpense from './components/addExpense'
 
 function App() {
+  const [isloggedIn, setIsLoggin] = useState(true)
+
 
   return (
-    <div className='app'>
-      <Header/>
-      <Login/>
-    </div>
+    <>
+      <AppHeader setIsLoggin={setIsLoggin} isloggedIn={isloggedIn}/>
+      <div className='app'>
+        {isloggedIn ? <AddExpense /> : <Login setIsLoggin={setIsLoggin} />}
+      </div>
+    </>
+
   )
 }
 

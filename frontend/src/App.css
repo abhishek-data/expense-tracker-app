@@ -42,7 +42,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 0 20px;
-  color: #fff; 
+  color: #fff;
 }
 
 .logo {
@@ -50,15 +50,22 @@
 }
 
 .logout-button {
-  background-color: #ff4d4f; 
-  border-color: #ff4d4f; 
+  background-color: #ff4d4f;
+  border-color: #ff4d4f;
 }
 
 .logout-button:hover {
-  background-color: #ff7875; 
-  border-color: #ff7875; 
+  background-color: #ff7875;
+  border-color: #ff7875;
 }
 
 .content {
   padding: 24px;
 }
+
+.expense-form {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+
