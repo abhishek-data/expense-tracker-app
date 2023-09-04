@@ -11,11 +11,14 @@ const { Option } = Select
 const AddExpense = () => {
     const [expenseList, setExpenseList] = useState([])
     const [expenseFlag, setExpenseFlag] = useState(true)
+    const [token, setToken] = useState(null)
 
     useEffect(() => {
         const getExpense = async () => {
+            const token = localStorage.getItem('token')
+            setToken(token)
             try {
-                const response = await axios.get(`${API_URL}/expense`)
+                const response = await axios.get(`${API_URL}/expense`, { headers: { 'Authorization': token } })
                 if (response?.data) {
                     setExpenseList(response.data)
                 }
@@ -44,7 +47,7 @@ const AddExpense = () => {
 
     const onDelete = async (id) => {
         try {
-            const response = await axios.delete(`${API_URL}/expense/delete-expense/${id}`)
+            const response = await axios.delete(`${API_URL}/expense/delete-expense/${id}`, { headers: { 'Authorization': token } })
             if (response?.data) {
                 message.success(response.data.message)
                 setExpenseFlag(prev => !prev)
@@ -55,7 +58,7 @@ const AddExpense = () => {
     }
     const onEdit = async (id) => {
         try {
-            const response = await axios.put(`${API_URL}/expense/update-expense/${id}`)
+            const response = await axios.put(`${API_URL}/expense/update-expense/${id}`, { headers: { 'Authorization': token } })
             if (response?.data) {
                 message.success(response.data.message)
                 setExpenseFlag(prev => !prev)
@@ -68,7 +71,7 @@ const AddExpense = () => {
     const onFinish = async (values) => {
         console.log(values);
         try {
-            const response = await axios.post(`${API_URL}/expense/add-expense`, values)
+            const response = await axios.post(`${API_URL}/expense/add-expense`, values, { headers: { 'Authorization': token } })
             if (response?.data) {
                 message.success(response.data.message)
                 setExpenseFlag(prev => !prev)

@@ -5,6 +5,8 @@ const sequelize = require('./util/database')
 const cors = require("cors")
 const authRoutes = require('./routes/auth')
 const expenseRoutes = require('./routes/expense')
+const User = require("./models/user")
+const Expense = require("./models/expense")
 
 
 const app = express()
@@ -15,6 +17,9 @@ app.use(authRoutes)
 app.use("/expense", expenseRoutes)
 
 const PORT = process.env.PORT || 5000
+
+User.hasMany(Expense);
+Expense.belongsTo(User)
 
 sequelize
     // .sync({ force: true })

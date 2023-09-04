@@ -1,5 +1,7 @@
 const User = require('../models/user')
 const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
+const secretKey = process.env.JWT_SECRET
 
 exports.signup = async (req, res, next) => {
     try {
@@ -9,7 +11,7 @@ exports.signup = async (req, res, next) => {
             return res.status(409).json({ message: 'A account is already exits with this email.' })
         }
         bcrypt.hash(password, 10, async (err, hash) => {
-            await User.create({fullname, email,password: hash})
+            await User.create({ fullname, email, password: hash })
             res.status(201).json({ message: 'You have sucessfully signed-up' })
 
         })
@@ -30,7 +32,9 @@ exports.login = async (req, res, next) => {
         if (!passwordMatch) {
             return res.status(401).json({ error: 'Invalid credentials' })
         }
-        res.status(200).json({ message: 'You have sucessfully logged-in' })
+        const token = jwt.sign({ userId: user.id, email: user.email }, secretKey, { expiresIn: '1h' });
+
+        res.status(200).json({ message: 'You have sucessfully logged-in', token })
     } catch (err) {
         console.log(err);
         res.status(500).json({ error: 'Internal server error' })
