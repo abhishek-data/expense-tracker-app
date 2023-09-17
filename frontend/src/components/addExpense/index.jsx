@@ -38,7 +38,7 @@ const AddExpense = () => {
             dataIndex: "id",
             render: (id) => (
                 <span>
-                    <Button type='primary' icon={<EditOutlined />} onClick={() => onEdit(id)} />
+                    {/* <Button type='primary' icon={<EditOutlined />} onClick={() => onEdit(id)} /> */}
                     <Button type='danger' icon={<DeleteOutlined />} onClick={() => onDelete(id)} />
                 </span>
             )
@@ -56,17 +56,17 @@ const AddExpense = () => {
             message.error(error)
         }
     }
-    const onEdit = async (id) => {
-        try {
-            const response = await axios.put(`${API_URL}/expense/update-expense/${id}`, { headers: { 'Authorization': token } })
-            if (response?.data) {
-                message.success(response.data.message)
-                setExpenseFlag(prev => !prev)
-            }
-        } catch (error) {
-            message.error(error)
-        }
-    }
+    // const onEdit = async (id) => {
+    //     try {
+    //         const response = await axios.put(`${API_URL}/expense/update-expense/${id}`, { headers: { 'Authorization': token } })
+    //         if (response?.data) {
+    //             message.success(response.data.message)
+    //             setExpenseFlag(prev => !prev)
+    //         }
+    //     } catch (error) {
+    //         message.error(error)
+    //     }
+    // }
 
     const onFinish = async (values) => {
         console.log(values);

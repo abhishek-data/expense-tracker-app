@@ -13,6 +13,7 @@
     "@ant-design/icons": "^5.2.5",
     "antd": "^5.8.4",
     "axios": "^1.4.0",
+    "razorpay": "^2.9.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.15.0"
