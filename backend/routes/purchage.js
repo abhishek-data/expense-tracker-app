@@ -7,7 +7,7 @@ const purchageController = require("../controllers/purchageController")
 
 router.get("/get-premium", userAuthenticate.authenticate, purchageController.getPremium)
 
-router.post("/update-payment", userAuthenticate.authenticate, purchageController.updatePayment)
+router.post("/updatepayment", userAuthenticate.authenticate, purchageController.updatePayment)
 
 
 

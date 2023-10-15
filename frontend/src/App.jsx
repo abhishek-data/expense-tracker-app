@@ -8,7 +8,10 @@ function App() {
   const [isloggedIn, setIsLoggin] = useState(false)
 
   useEffect(() => {
-
+    const token = localStorage.getItem('token')
+    if(token){
+      setIsLoggin(true)
+    }
   })
 
   return (

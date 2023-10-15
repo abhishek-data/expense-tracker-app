@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Layout, Button, message, Modal } from 'antd';
 import BuyPremium from '../../pages/buyPremium';
 import axios from 'axios';
@@ -8,8 +8,18 @@ const { Header, Content } = Layout;
 
 const AppHeader = ({ setIsLoggin, isloggedIn }) => {
   const [showpremium, setShowPremium] = useState(false)
+  const [ispremiumUser, setIsPremiumUser] = useState(false)
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    if (token) {
+      const ispreiumUser = decodeToken(token).ispremiumUser
+      setIsPremiumUser(ispreiumUser)
+    }
+  }, [])
   const handleLogout = () => {
     setIsLoggin(false)
+    setIsPremiumUser(false)
+    localStorage.removeItem('token')
     message.success("You have sucessfully logged out.")
   };
 
@@ -26,11 +36,13 @@ const AppHeader = ({ setIsLoggin, isloggedIn }) => {
         order_id: response.data.order.id,
         handler: async function (response) {
           console.log(response);
-          await axios.post(`${API_URL}/purchage/update-payment`, {
+          const res = await axios.post(`${API_URL}/purchage/updatepayment`, {
             order_id: options.order_id,
             payment_id: response.razorpay_payment_id,
           }, { headers: { 'Authorization': token } });
+          setIsPremiumUser(true)
           message.success("you are a premium user now.");
+          localStorage.setItem('token', res.data.token)
         }
       };
 
@@ -42,7 +54,6 @@ const AppHeader = ({ setIsLoggin, isloggedIn }) => {
     } catch (err) {
       message.error(err.message);
     }
-    // setShowPremium(true)
   }
 
 
@@ -51,9 +62,9 @@ const AppHeader = ({ setIsLoggin, isloggedIn }) => {
       <Layout>
         <Header className="header">
           <div className="logo">Expense Tracker</div>
-          {isloggedIn && <Button type="primary" onClick={showBuyPremium}>
+          {isloggedIn && (ispremiumUser ? <div className="logo">You are premium user.</div> : <Button type="primary" onClick={showBuyPremium}>
             Buy Premium
-          </Button>}
+          </Button>)}
           {isloggedIn && <Button className="logout-button" type="primary" onClick={handleLogout}>
             Logout
           </Button>}

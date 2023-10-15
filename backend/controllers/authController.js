@@ -21,6 +21,10 @@ exports.signup = async (req, res, next) => {
     }
 }
 
+exports.generateAcessToken = (id, name, ispremiumUser) => {
+    return jwt.sign({userId:id, name:name, ispremiumUser:ispremiumUser}, 'secretKey')
+}
+
 exports.login = async (req, res, next) => {
     try {
         const { email, password } = req.body
@@ -32,7 +36,7 @@ exports.login = async (req, res, next) => {
         if (!passwordMatch) {
             return res.status(401).json({ error: 'Invalid credentials' })
         }
-        const token = jwt.sign({ userId: user.id, email: user.email }, secretKey, { expiresIn: '1h' });
+        const token = jwt.sign({ userId: user.id, email: user.email, ispremiumUser: user.ispremiumuser }, secretKey, { expiresIn: '1h' });
 
         res.status(200).json({ message: 'You have sucessfully logged-in', token })
     } catch (err) {

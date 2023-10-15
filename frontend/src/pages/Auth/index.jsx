@@ -12,17 +12,17 @@ const Login = ({ setIsLoggin }) => {
         const response = await axios.post(`${API_URL}/login`, value)
         setIsLoggin(true)
         localStorage.setItem('token', response.data.token)
-        message.success(`welcome! ${response.data.message}`)
+        message.success(`welcome! ${response.data.message}`,2)
 
       } else {
         const response = await axios.post(`${API_URL}/signup`, value)
         setHaveAccount(true)
-        message.success(`welcome! ${response.data.message}`)
+        message.success(`welcome! ${response.data.message}`,2)
 
       }
 
     } catch (error) {
-      message.error(error.message)
+      message.error(error.message,2)
     }
   }
 
