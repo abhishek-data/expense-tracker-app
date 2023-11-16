@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Layout, Button, message, Modal } from 'antd';
 import BuyPremium from '../../pages/buyPremium';
 import axios from 'axios';
-import { API_URL } from '../../util/config';
+import { API_URL, decodeToken } from '../../utils/config';
 
 const { Header, Content } = Layout;
 
@@ -12,8 +12,9 @@ const AppHeader = ({ setIsLoggin, isloggedIn }) => {
   useEffect(() => {
     const token = localStorage.getItem('token')
     if (token) {
-      const ispreiumUser = decodeToken(token).ispremiumUser
-      setIsPremiumUser(ispreiumUser)
+      // const _ispreiumUser = decodeToken(token).ispremiumUser
+      const _ispreiumUser = true
+      setIsPremiumUser(_ispreiumUser)
     }
   }, [])
   const handleLogout = () => {
@@ -27,7 +28,6 @@ const AppHeader = ({ setIsLoggin, isloggedIn }) => {
     console.log("hi");
     try {
       const token = localStorage.getItem('token');
-      console.log(token);
       const response = await axios.get(`${API_URL}/purchage/get-premium`, { headers: { 'Authorization': token } });
       console.log("response", response.data);
 

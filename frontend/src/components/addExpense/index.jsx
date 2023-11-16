@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Form, Input, Button, Card, message, Select, Table, InputNumber } from 'antd';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import axios from 'axios';
-import { API_URL } from '../../util/config';
+import { API_URL } from '../../utils/config';
 
 const { Option } = Select
 

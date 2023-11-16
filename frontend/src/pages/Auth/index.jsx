@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import axios from 'axios'
 import { Button, Divider, Form, Input, Typography, message } from 'antd';
-import { API_URL } from '../../util/config';
+import { API_URL } from '../../utils/config';
 const Login = ({ setIsLoggin }) => {
 
   const [haveAccount, setHaveAccount] = useState(false)
