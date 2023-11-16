@@ -3,20 +3,24 @@ import { Layout, Button, message, Modal } from 'antd';
 import BuyPremium from '../../pages/buyPremium';
 import axios from 'axios';
 import { API_URL, decodeToken } from '../../utils/config';
+import LeaderBoard from '../LeaderBoard';
 
 const { Header, Content } = Layout;
 
 const AppHeader = ({ setIsLoggin, isloggedIn }) => {
   const [showpremium, setShowPremium] = useState(false)
   const [ispremiumUser, setIsPremiumUser] = useState(false)
+  const [isShowLeaderBoard, setIsLeaderBoard] = useState(false)
+  const [LeaderBoardData, setLeaderBoardData] = useState([])
   useEffect(() => {
     const token = localStorage.getItem('token')
     if (token) {
-      // const _ispreiumUser = decodeToken(token).ispremiumUser
-      const _ispreiumUser = true
+      const _ispreiumUser = decodeToken(token).ispremiumUser
       setIsPremiumUser(_ispreiumUser)
     }
-  }, [])
+
+  }, [isloggedIn])
+
   const handleLogout = () => {
     setIsLoggin(false)
     setIsPremiumUser(false)
@@ -25,11 +29,9 @@ const AppHeader = ({ setIsLoggin, isloggedIn }) => {
   };
 
   const showBuyPremium = async () => {
-    console.log("hi");
     try {
       const token = localStorage.getItem('token');
       const response = await axios.get(`${API_URL}/purchage/get-premium`, { headers: { 'Authorization': token } });
-      console.log("response", response.data);
 
       const options = {
         key: response.data.key_id,
@@ -56,13 +58,29 @@ const AppHeader = ({ setIsLoggin, isloggedIn }) => {
     }
   }
 
+  const showLeaderBoard = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`${API_URL}/purchage/leaderboard`, { headers: { 'Authorization': token } });
+      if (!response) {
+        throw new Error("Something went wrong")
+      }
+      setLeaderBoardData(response?.data?.users)
+      setIsLeaderBoard(true)
+    } catch (err) {
+      message.error(err.message);
+    }
+  }
+
 
   return (
     <>
       <Layout>
         <Header className="header">
           <div className="logo">Expense Tracker</div>
-          {isloggedIn && (ispremiumUser ? <div className="logo">You are premium user.</div> : <Button type="primary" onClick={showBuyPremium}>
+          {isloggedIn && (ispremiumUser ? <div className="logo">You are premium user <Button type="primary" onClick={showLeaderBoard}>
+            Show LeaderBoard
+          </Button></div> : <Button type="primary" onClick={showBuyPremium}>
             Buy Premium
           </Button>)}
           {isloggedIn && <Button className="logout-button" type="primary" onClick={handleLogout}>
@@ -71,12 +89,14 @@ const AppHeader = ({ setIsLoggin, isloggedIn }) => {
         </Header>
       </Layout>
       <Modal
-        title="Buy Premium"
-        open={showpremium}
-        onCancel={() => setShowPremium(false)}
-        width={600}
+        title="LeaderBoard"
+        open={isShowLeaderBoard}
+        onCancel={() => setIsLeaderBoard(false)}
+        width={500}
+        maskClosable={false}
+        footer={null}
       >
-        {/* <BuyPremium /> */}
+        <LeaderBoard data={LeaderBoardData} />
       </Modal>
     </>
   );

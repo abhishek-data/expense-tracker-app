@@ -111,7 +111,7 @@ const AddExpense = () => {
             </Card>
             <div style={{ width: 400, height: '100%', overflow: 'auto' }}>
                 <Table dataSource={expenseList} columns={columns} style={{ width: 400 }} rowKey='id' pagination={{ pageSize: 3, hideOnSinglePage: true }} />
-
+                
             </div>
         </div>
     );

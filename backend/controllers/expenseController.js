@@ -2,7 +2,7 @@ const Expense = require('../models/expense')
 
 exports.getExpense = async (req, res, next) => {
     try {
-        const expenses = await Expense.findAll({ where: { userId: req.user.id } })
+        const expenses = await Expense.findAll({ where: { userId: req.user.id }, order:[['createdAt', 'DESC']] })
         res.status(200).json(expenses)
     } catch (error) {
         res.status(500).json({ error: "Internal Server Error." })
