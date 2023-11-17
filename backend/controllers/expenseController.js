@@ -1,5 +1,6 @@
 const Expense = require('../models/expense')
 const User = require('../models/user')
+const sequelize = require('../util/database')
 
 exports.getExpense = async (req, res, next) => {
     try {
@@ -11,35 +12,42 @@ exports.getExpense = async (req, res, next) => {
 }
 
 exports.addExpense = async (req, res, next) => {
+    const t = await sequelize.transaction();
     try {
         const { expenseAmount, description, category } = req.body
-        await Expense.create({ expenseAmount, description, category, UserId: req.user.id })
+        await Expense.create({ expenseAmount, description, category, UserId: req.user.id }, { transaction: t })
         await User.update(
             { totalExpenses: expenseAmount + req.user.totalExpenses },
-            { where: { id: req.user.id } }
+            { where: { id: req.user.id }, transaction: t },
         );
+        await t.commit();
         res.status(200).json({ message: "Expense added sucessfully." })
     } catch (error) {
+        await t.rollback();
         res.status(500).json({ error: "Internal Server error." })
     }
 }
 
 exports.deleteExpense = async (req, res, next) => {
+    const t = await sequelize.transaction();
     try {
         const id = req.params.id
         const expense = await Expense.findByPk(id)
-        await Expense.destroy({ where: { id: id, userId: req.user.id } })
+        await Expense.destroy({ where: { id: id, userId: req.user.id } }, { transaction: t })
         await User.update(
             { totalExpenses: req.user.totalExpenses - expense.expenseAmount },
-            { where: { id: req.user.id } }
+            { where: { id: req.user.id }, transaction: t }
         );
+        await t.commit();
         res.status(200).json({ message: "Expense Deleted sucessfully" })
     } catch (error) {
+        await t.rollback();
         res.status(500).json({ error: 'Internal server Error.' })
     }
 }
 
 exports.updateExpense = async (req, res, next) => {
+    const t = await sequelize.transaction();
     try {
         const id = req.params.id
         const updatedExpense = req.body
@@ -53,11 +61,13 @@ exports.updateExpense = async (req, res, next) => {
         }
         await User.update(
             { totalExpenses: updatedExpense.expenseAmount + req.user.totalExpenses - expense.expenseAmount },
-            { where: { id: req.user.id } }
+            { where: { id: req.user.id }, transaction: t }
         );
-        await expense.update({ ...updatedExpense, UserId: req.user.id })
+        await t.commit();
+        await expense.update({ ...updatedExpense, UserId: req.user.id }, { transaction: t })
         res.status(200).json({ message: "Expense Updated Sucessfully" })
     } catch (error) {
+        await t.rollback();
         res.status(500).json({ error: "Internal Server Error." })
     }
 }
