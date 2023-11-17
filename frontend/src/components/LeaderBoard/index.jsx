@@ -18,8 +18,9 @@ const LeaderBoard = ({ data }) => {
             key: 'serialNo',
             render: (text, record, index) => index + 1
         },
-        { title: "User", dataIndex: ['User', 'fullname'], key: "User.fullname" },
-        { title: "Total Expense", dataIndex: "totalExpense", key: "totalExpense" },
+        // { title: "User", dataIndex: ['User', 'fullname'], key: "User.fullname" },
+        { title: "User", dataIndex: 'fullname', key: 'fullname' },
+        { title: "Total Expense", dataIndex: "totalExpenses", key: "totalExpenses" },
     ]
 
 

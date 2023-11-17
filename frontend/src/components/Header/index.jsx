@@ -92,7 +92,7 @@ const AppHeader = ({ setIsLoggin, isloggedIn }) => {
         title="LeaderBoard"
         open={isShowLeaderBoard}
         onCancel={() => setIsLeaderBoard(false)}
-        width={500}
+        width={450}
         maskClosable={false}
         footer={null}
       >

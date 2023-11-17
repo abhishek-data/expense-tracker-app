@@ -57,17 +57,23 @@ exports.updatePayment = async (req, res, next) => {
 
 exports.getLeaderBoardData = async (req, res) => {
     try {
-        const users = await Expense.findAll({
+        // const users = await Expense.findAll({
+        //     attributes: [
+        //         'userId',
+        //         [sequelize.fn('SUM', sequelize.col('expenseAmount')), 'totalExpense']
+        //     ],
+        //     group: ['userId'],
+        //     include: [{
+        //         model: User,
+        //         attributes: ['id', 'fullname']
+        //     }],
+        //     order: [[sequelize.literal('totalExpense'), 'DESC']]
+        // });
+        const users = await User.findAll({
             attributes: [
-                'userId',
-                [sequelize.fn('SUM', sequelize.col('expenseAmount')), 'totalExpense']
+                'id', 'fullname', 'totalExpenses'
             ],
-            group: ['userId'],
-            include: [{
-                model: User,
-                attributes: ['id', 'fullname']
-            }],
-            order: [[sequelize.literal('totalExpense'), 'DESC']]
+            order: [[sequelize.literal('totalExpenses'), 'DESC']]
         });
         return res.status(200).json({ users });
     } catch (error) {
