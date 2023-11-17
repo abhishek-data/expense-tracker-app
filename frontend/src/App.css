@@ -36,6 +36,12 @@
   cursor: pointer;
 }
 
+.forgotPassword {
+  text-align: center;
+  color: blue;
+  cursor: pointer;
+}
+
 .header {
   background-color: #001529;
   display: flex;
