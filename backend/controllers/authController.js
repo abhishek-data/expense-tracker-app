@@ -1,7 +1,9 @@
 const User = require('../models/user')
+const ForgotPasswordRequest = require('../models/forgotPasswordRequests')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const nodemailer = require('nodemailer');
+const { v4: uuidv4 } = require('uuid');
 const secretKey = process.env.JWT_SECRET
 
 exports.signup = async (req, res, next) => {
@@ -47,35 +49,36 @@ exports.login = async (req, res, next) => {
 }
 
 exports.forgotPassword = async (req, res, next) => {
-    const userEmail = req.body.email; // Assuming you have the email from the request body
-
-    // Create a transporter using your email service credentials
+    const userEmail = req.body.email;
+    const user = await User.findOne({ where: { email: userEmail } });
+    if (!user) {
+        return res.status(409).json({ message: 'please enter a valid email linked to your account.' })
+    }
     const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
-            user: 'sonusingh.web.dev@gmail.com', // Replace with your Gmail email address
-            pass: 'qvfqpfrdauqwagqy' // Replace with your Gmail password or app-specific password
+            user: 'sonusingh.web.dev@gmail.com',
+            pass: 'qvfqpfrdauqwagqy'
         }
     });
 
-    // Generate a random temporary password or a token for reset
-    const temporaryPassword = generateTemporaryPassword(); // Implement this function
-
-    // Define email content and template
+    const resetpasswordId = uuidv4();
+    ForgotPasswordRequest.create({ id: resetpasswordId, isactive: true, userId: user.id })
+    const resetLink = `http://localhost:5173/password/resetpassword/${resetpasswordId}`;
     const mailOptions = {
-        from: 'sonusingh.web.dev@gmail.com', // Replace with your Gmail email address
+        from: 'sonusingh.web.dev@gmail.com',
         to: userEmail,
         subject: 'Password Reset',
         html: `
-            <p>Hello,</p>
-            <p>You have requested to reset your password. Your temporary password is: ${temporaryPassword}</p>
-            <p>Please use this temporary password to log in and update your password.</p>
-            <p>If you didn't request this, please ignore this email.</p>
-          `
+      <p>Hello,</p>
+      <p>You have requested to reset your password.</p>
+      <p>Click the following link to reset your password:</p>
+      <a href="${resetLink}">${resetLink}</a>
+      <p>If you didn't request this, please ignore this email.</p>
+    `
     };
 
     try {
-        // Send the email
         await transporter.sendMail(mailOptions);
         res.status(200).json({ message: 'Password reset email sent successfully.' });
     } catch (error) {
@@ -84,15 +87,28 @@ exports.forgotPassword = async (req, res, next) => {
     }
 }
 
-
-
-// Function to generate a temporary password or token
-function generateTemporaryPassword() {
-    // Implement your logic to generate a temporary password or token
-    // For example, you can use a library like 'crypto' to generate a random token
-    const crypto = require('crypto');
-    return crypto.randomBytes(8).toString('hex');
+exports.resetPassword = async (req, res, next) => {
+    const resetpasswordId = req.params.id;
+    const { password } = req.body;
+    const resetRequest = await ForgotPasswordRequest.findOne({ where: { id: resetpasswordId } })
+    if (!resetRequest) {
+        return res.status(409).json({ message: 'Invalid reset password link.' })
+    }
+    if (!resetRequest.isactive) {
+        return res.status(409).json({ message: 'This reset password link has been expired.' })
+    }
+    const user = await User.findOne({ where: { id: resetRequest.userId } })
+    if (!user) {
+        return res.status(409).json({ message: 'Invalid reset password link.' })
+    }
+    bcrypt.hash(password, 10, async (err, hash) => {
+        await user.update({ password: hash })
+        await resetRequest.update({ isactive: false })
+        res.status(200).json({ message: 'Password reset successfully.' })
+    })
 }
+
+
 
 
 

@@ -9,6 +9,7 @@ const purchageRoutes = require('./routes/purchage')
 const User = require("./models/user")
 const Expense = require("./models/expense")
 const Order = require("./models/orders")
+const ForgotPasswordRequest = require("./models/forgotPasswordRequests")
 
 
 const app = express()
@@ -25,6 +26,7 @@ User.hasMany(Expense);
 Expense.belongsTo(User)
 
 User.hasMany(Order);
+User.hasMany(ForgotPasswordRequest);
 Order.belongsTo(User)
 
 sequelize

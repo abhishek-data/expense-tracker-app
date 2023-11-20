@@ -1,27 +1,55 @@
 import { useEffect, useState } from 'react'
+import {
+  createBrowserRouter,
+  Outlet,
+  RouterProvider,
+} from "react-router-dom";
 import './App.css'
 import AppHeader from './components/Header'
 import Login from './pages/Auth'
 import AddExpense from './components/addExpense'
+import ResetPassword from './components/resetPassword';
 
 function App() {
   const [isloggedIn, setIsLoggin] = useState(false)
 
   useEffect(() => {
     const token = localStorage.getItem('token')
-    if(token){
+    if (token) {
       setIsLoggin(true)
     }
   })
 
-  return (
-    <>
-      <AppHeader setIsLoggin={setIsLoggin} isloggedIn={isloggedIn} />
-      <div className='app'>
-        {isloggedIn ? <AddExpense /> : <Login setIsLoggin={setIsLoggin} />}
-      </div>
-    </>
+  const Root = () => {
+    return (
+      <>
+        <AppHeader setIsLoggin={setIsLoggin} isloggedIn={isloggedIn} />
+        <div className='app'>
+          <Outlet />
+        </div>
+      </>
+    )
+  }
 
+  const router = createBrowserRouter([
+    {
+      path: "/",
+      element: <Root />,
+      children: [
+        {
+          path: "/",
+          element: isloggedIn ? <AddExpense /> : <Login setIsLoggin={setIsLoggin} />,
+        },
+        {
+          path: "/password/resetpassword/:id",
+          element: <ResetPassword />,
+        },
+      ],
+    },
+  ]);
+
+  return (
+    <RouterProvider router={router} />
   )
 }
 
