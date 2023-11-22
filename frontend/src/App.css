@@ -55,6 +55,14 @@
   font-size: 20px;
 }
 
+.premium-button {
+  font-size: 16px;
+  align-items: center;
+  justify-content: center;
+  display:  flex;
+  gap: 20px;
+}
+
 .logout-button {
   background-color: #ff4d4f;
   border-color: #ff4d4f;
