@@ -10,6 +10,7 @@ const User = require("./models/user")
 const Expense = require("./models/expense")
 const Order = require("./models/orders")
 const ForgotPasswordRequest = require("./models/forgotPasswordRequests")
+const FileDonload = require("./models/fileDonload")
 
 
 const app = express()
@@ -27,6 +28,7 @@ Expense.belongsTo(User)
 
 User.hasMany(Order);
 User.hasMany(ForgotPasswordRequest);
+User.hasMany(FileDonload)
 Order.belongsTo(User)
 
 sequelize

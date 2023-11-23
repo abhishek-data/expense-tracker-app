@@ -13,4 +13,6 @@ router.put("/update-expense/:id", userAuthenticate.authenticate, expenseControll
 
 router.delete("/delete-expense/:id", userAuthenticate.authenticate, expenseController.deleteExpense)
 
+router.get("/donload", userAuthenticate.authenticate, expenseController.downloadExpense)
+
 module.exports = router

@@ -5,6 +5,7 @@ import axios from 'axios';
 import { API_URL, decodeToken } from '../../utils/config';
 import LeaderBoard from '../LeaderBoard';
 import ExpenseReport from '../expenseReport';
+import { DownCircleOutlined } from '@ant-design/icons';
 
 const { Header, Content } = Layout;
 
@@ -14,6 +15,7 @@ const AppHeader = ({ setIsLoggin, isloggedIn }) => {
   const [isShowLeaderBoard, setIsLeaderBoard] = useState(false)
   const [LeaderBoardData, setLeaderBoardData] = useState([])
   const [expenseReportData, setExpenseReportData] = useState([])
+  const [previousDonload, setPreviousDonload] = useState([])
   useEffect(() => {
     const token = localStorage.getItem('token')
     if (token) {
@@ -34,7 +36,7 @@ const AppHeader = ({ setIsLoggin, isloggedIn }) => {
       }
     }
 
-  }, [isloggedIn])
+  }, [isloggedIn, showReport])
 
   const handleLogout = () => {
     setIsLoggin(false)
@@ -91,6 +93,18 @@ const AppHeader = ({ setIsLoggin, isloggedIn }) => {
     setShowReport(true)
   }
 
+  const donloadReport = async () => {
+    try {
+      const token = localStorage.getItem("token")
+      const response = await axios.get(`${API_URL}/expense/donload`, { headers: { 'Authorization': token } })
+      const data = await response.data
+      setPreviousDonload(data?.donloads)
+      window.open(data.url, '_blank');
+    } catch (err) {
+      message.error("Something went wrong loading the report")
+    }
+  }
+
 
   return (
     <>
@@ -126,9 +140,15 @@ const AppHeader = ({ setIsLoggin, isloggedIn }) => {
           onCancel={() => setShowReport(false)}
           width={500}
           maskClosable={false}
-          footer={null}
+          footer={
+            <div style={{ textAlign: 'right' }}>
+              <Button style={{ marginRight: 8 }} onClick={donloadReport}>
+                Donload Report
+              </Button>
+            </div>
+          }
         >
-          <ExpenseReport expenseReportData={expenseReportData} />
+          <ExpenseReport expenseReportData={expenseReportData} previousDonload={previousDonload}/>
         </Modal>
         : undefined}
     </>

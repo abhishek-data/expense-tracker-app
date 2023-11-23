@@ -1,7 +1,8 @@
 const Expense = require('../models/expense')
 const User = require('../models/user')
+const FileDonload = require('../models/fileDonload')
 const sequelize = require('../util/database')
-
+const { uploadToS3 } = require('../services/s3Services')
 exports.getExpense = async (req, res, next) => {
     try {
         const expenses = await Expense.findAll({ where: { userId: req.user.id }, order: [['createdAt', 'DESC']] })
@@ -72,6 +73,22 @@ exports.updateExpense = async (req, res, next) => {
     }
 }
 
+
+
+exports.downloadExpense = async (req, res) => {
+    try {
+        const expenses = await Expense.findAll({ where: { userId: req.user.id }, order: [['createdAt', 'DESC']] })
+        const stringyfiedExpense = JSON.stringify(expenses)
+        const filename = `expenses-${req.user.id}-${new Date()}.txt`
+        const fileUrl = await uploadToS3(stringyfiedExpense, filename)
+        await FileDonload.create({ url: fileUrl, UserId: req.user.id })
+        const donloads = await FileDonload.findAll({ where: { UserId: req.user.id } })
+        res.status(200).json({ url: fileUrl, donloads })
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: "Internal server error." })
+    }
+}
 
 
 
