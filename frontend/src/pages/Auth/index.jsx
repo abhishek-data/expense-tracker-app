@@ -37,7 +37,7 @@ const Login = ({ setIsLoggin }) => {
   }
 
   return (
-    <div className='loginForm'>
+    <div className='loginForm' style={{ width: '40%', display: 'flex', flexDirection: 'column', margin: '16px auto', alignItems: 'center', opacity: 0.9 }}>
       {havePassword ? (
         <Form onFinish={loginHandler}>
           <Typography.Title className='loginTitle'>{haveAccount ? "Login" : "SignUp"}</Typography.Title>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Form, Input, Button, Card, message, Select, Table, InputNumber } from 'antd';
-import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { EditOutlined, DeleteOutlined, StepBackwardOutlined, StepForwardOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import { API_URL } from '../../utils/config';
 
@@ -12,22 +12,25 @@ const AddExpense = () => {
     const [expenseList, setExpenseList] = useState([])
     const [expenseFlag, setExpenseFlag] = useState(true)
     const [token, setToken] = useState(null)
+    const [currentPage, setCurrentPage] = useState(1)
+    const [totalPages, setTotalPages] = useState(0)
 
     useEffect(() => {
         const getExpense = async () => {
             const token = localStorage.getItem('token')
             setToken(token)
             try {
-                const response = await axios.get(`${API_URL}/expense`, { headers: { 'Authorization': token } })
+                const response = await axios.get(`${API_URL}/expense?page=${currentPage}`, { headers: { 'Authorization': token } })
                 if (response?.data) {
-                    setExpenseList(response.data)
+                    setExpenseList(response.data.expenses)
+                    setTotalPages(response.data.totalPages)
                 }
             } catch (error) {
                 message.error(error)
             }
         }
         getExpense()
-    }, [expenseFlag])
+    }, [expenseFlag, currentPage])
 
     const columns = [
         { title: "Expense Amount", dataIndex: "expenseAmount", key: "expenseAmount" },
@@ -82,38 +85,55 @@ const AddExpense = () => {
     }
 
     return (
-        <div className='expense-form'>
-            <Card title="Add Expense" style={{ width: 400 }}>
-                <Form onFinish={onFinish}>
-                    <Form.Item label="Expense Amount" name="expenseAmount" rules={[{ required: true, message: 'Please input your Expense Amount' }]}>
-                        <InputNumber size="default" />
-                    </Form.Item>
-                    <Form.Item label="Description" name="description" rules={[{ required: true, message: 'Please input your description' }]}>
-                        <Input />
-                    </Form.Item>
-                    <Form.Item
-                        label="Category"
-                        name="category"
-                        rules={[{ required: true, message: 'Please select your category' }]}
-                    >
-                        <Select>
-                            <Option value="food">Food</Option>
-                            <Option value="petrol">Petrol</Option>
-                            <Option value="shopping">Shopping</Option>
-                        </Select>
-                    </Form.Item>
-                    <Form.Item>
-                        <Button type="primary" htmlType="submit">
-                            Add
-                        </Button>
-                    </Form.Item>
-                </Form>
-            </Card>
-            <div style={{ width: 400, height: '100%', overflow: 'auto' }}>
-                <Table dataSource={expenseList} columns={columns} style={{ width: 400 }} rowKey='id' pagination={{ pageSize: 3, hideOnSinglePage: true }} />
-                
+        <>
+            <div style={{ width: '50%', display: 'flex', flexDirection: 'column', margin: '16px auto', alignItems: 'center', opacity: 0.9 }}>
+                <Card title="Add Expense" style={{ width: '100%' }}>
+                    <Form onFinish={onFinish} style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                        <Form.Item label="Expense Amount" name="expenseAmount" style={{ marginBottom: '8px' }} rules={[{ required: true, message: 'Please input your Expense Amount' }]}>
+                            <InputNumber size="default" />
+                        </Form.Item>
+                        <Form.Item label="Description" name="description" style={{ marginBottom: '8px' }} rules={[{ required: true, message: 'Please input your description' }]}>
+                            <Input />
+                        </Form.Item>
+                        <Form.Item
+                            label="Category"
+                            name="category"
+                            style={{ marginBottom: '8px' }}
+                            rules={[{ required: true, message: 'Please select your category' }]}
+                        >
+                            <Select>
+                                <Option value="food">Food</Option>
+                                <Option value="petrol">Petrol</Option>
+                                <Option value="shopping">Shopping</Option>
+                            </Select>
+                        </Form.Item>
+                        <Form.Item style={{ marginBottom: '8px' }}>
+                            <Button type="primary" htmlType="submit">
+                                Add
+                            </Button>
+                        </Form.Item>
+                    </Form>
+                </Card>
             </div>
-        </div>
+
+            <div style={{ width: '50%', margin: '16px auto', display: 'flex', justifyContent: 'center', opacity: 0.9 }}>
+
+                <Table
+                    dataSource={expenseList}
+                    columns={columns}
+                    style={{ width: '100%' }}
+                    rowKey='id'
+                    pagination={false}
+                    footer={() => (
+                        <div style={{ textAlign: 'center' }}>
+                            <Button disabled={currentPage === 1 ? true : false} onClick={() => setCurrentPage(prev => prev - 1)}><StepBackwardOutlined />
+                            </Button><Button onClick={() => setCurrentPage(prev => prev + 1)} disabled={currentPage >= totalPages} ><StepForwardOutlined /></Button>
+                        </div>
+                    )}
+                />
+            </div>
+        </>
+
     );
 };
 

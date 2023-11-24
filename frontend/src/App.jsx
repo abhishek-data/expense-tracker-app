@@ -22,12 +22,10 @@ function App() {
 
   const Root = () => {
     return (
-      <>
+      <div className='app'>
         <AppHeader setIsLoggin={setIsLoggin} isloggedIn={isloggedIn} />
-        <div className='app'>
-          <Outlet />
-        </div>
-      </>
+        <Outlet />
+      </div>
     )
   }
 

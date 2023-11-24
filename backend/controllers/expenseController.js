@@ -3,14 +3,33 @@ const User = require('../models/user')
 const FileDonload = require('../models/fileDonload')
 const sequelize = require('../util/database')
 const { uploadToS3 } = require('../services/s3Services')
+
+
 exports.getExpense = async (req, res, next) => {
     try {
-        const expenses = await Expense.findAll({ where: { userId: req.user.id }, order: [['createdAt', 'DESC']] })
-        res.status(200).json(expenses)
+        const page = req.query.page || 1;
+        const limit = 5;
+
+        const offset = (page - 1) * limit;
+
+        const result = await Expense.findAndCountAll({
+            where: { userId: req.user.id },
+            order: [['createdAt', 'DESC']],
+            limit: limit,
+            offset: offset,
+        });
+
+        res.status(200).json({
+            expenses: result.rows,
+            total: result.count,
+            currentPage: page,
+            totalPages: Math.ceil(result.count / limit),
+        });
     } catch (error) {
-        res.status(500).json({ error: "Internal Server Error." })
+        console.error('Error:', error);
+        res.status(500).json({ error: "Internal Server Error." });
     }
-}
+};
 
 exports.addExpense = async (req, res, next) => {
     const t = await sequelize.transaction();
