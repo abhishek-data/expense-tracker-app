@@ -1,4 +1,9 @@
 const express = require("express")
+const path = require("path")
+const fs = require("fs")
+const helmet = require("helmet")
+const compression = require('compression')
+const morgan = require('morgan')
 require("dotenv").config()
 const bodyParser = require("body-parser")
 const sequelize = require('./util/database')
@@ -14,7 +19,15 @@ const FileDonload = require("./models/fileDonload")
 
 
 const app = express()
+
+const accessLogStream = fs.createWriteStream(
+    path.join(__dirname, 'access.log'),
+    { flags: 'a' }
+);
 app.use(express.json())
+app.use(helmet());
+app.use(compression());
+app.use(morgan('combined', { stream: accessLogStream }));
 app.use(cors())
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(authRoutes)
@@ -36,7 +49,6 @@ sequelize
     .sync()
     .then(() => {
         app.listen(PORT, () => {
-            console.log(`server is running at port ${PORT}`);
         })
     })
     .catch(err => {

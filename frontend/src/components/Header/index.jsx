@@ -54,7 +54,6 @@ const AppHeader = ({ setIsLoggin, isloggedIn }) => {
         key: response.data.key_id,
         order_id: response.data.order.id,
         handler: async function (response) {
-          console.log(response);
           const res = await axios.post(`${API_URL}/purchage/updatepayment`, {
             order_id: options.order_id,
             payment_id: response.razorpay_payment_id,
@@ -71,7 +70,7 @@ const AppHeader = ({ setIsLoggin, isloggedIn }) => {
         message.error("Payment failed");
       });
     } catch (err) {
-      message.error(err.message);
+      message.error("something went wrong with the payment");
     }
   }
 
@@ -85,7 +84,7 @@ const AppHeader = ({ setIsLoggin, isloggedIn }) => {
       setLeaderBoardData(response?.data?.users)
       setIsLeaderBoard(true)
     } catch (err) {
-      message.error(err.message);
+      message.error("Something went wrong");
     }
   }
 

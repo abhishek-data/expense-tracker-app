@@ -44,7 +44,6 @@ const ResetPassword = () => {
                         { required: true, message: 'Please Confirm Your New Password' },
                         {
                             validator: (_, value) => {
-                                console.log(value);
                                 if (!value || form.getFieldValue('password') === value) {
                                     return Promise.resolve();
                                 }

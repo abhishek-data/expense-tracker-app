@@ -73,7 +73,6 @@ const AddExpense = () => {
     // }
 
     const onFinish = async (values) => {
-        console.log(values);
         try {
             const response = await axios.post(`${API_URL}/expense/add-expense`, values, { headers: { 'Authorization': token } })
             if (response?.data) {
