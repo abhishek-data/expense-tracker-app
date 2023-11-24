@@ -7,8 +7,9 @@ const { uploadToS3 } = require('../services/s3Services')
 
 exports.getExpense = async (req, res, next) => {
     try {
+        console.log("query", req.query);
         const page = req.query.page || 1;
-        const limit = 5;
+        const limit = +req.query.limit || 5;
 
         const offset = (page - 1) * limit;
 

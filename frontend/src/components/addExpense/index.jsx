@@ -13,6 +13,7 @@ const AddExpense = () => {
     const [expenseFlag, setExpenseFlag] = useState(true)
     const [token, setToken] = useState(null)
     const [currentPage, setCurrentPage] = useState(1)
+    const [limit, setLimit] = useState(5)
     const [totalPages, setTotalPages] = useState(0)
 
     useEffect(() => {
@@ -20,7 +21,7 @@ const AddExpense = () => {
             const token = localStorage.getItem('token')
             setToken(token)
             try {
-                const response = await axios.get(`${API_URL}/expense?page=${currentPage}`, { headers: { 'Authorization': token } })
+                const response = await axios.get(`${API_URL}/expense?page=${currentPage}&limit=${limit}`, { headers: { 'Authorization': token } })
                 if (response?.data) {
                     setExpenseList(response.data.expenses)
                     setTotalPages(response.data.totalPages)
@@ -30,7 +31,7 @@ const AddExpense = () => {
             }
         }
         getExpense()
-    }, [expenseFlag, currentPage])
+    }, [expenseFlag, currentPage, limit])
 
     const columns = [
         { title: "Expense Amount", dataIndex: "expenseAmount", key: "expenseAmount" },
@@ -125,9 +126,14 @@ const AddExpense = () => {
                     rowKey='id'
                     pagination={false}
                     footer={() => (
-                        <div style={{ textAlign: 'center' }}>
-                            <Button disabled={currentPage === 1 ? true : false} onClick={() => setCurrentPage(prev => prev - 1)}><StepBackwardOutlined />
-                            </Button><Button onClick={() => setCurrentPage(prev => prev + 1)} disabled={currentPage >= totalPages} ><StepForwardOutlined /></Button>
+                        <div style={{ display: 'flex', gap: '3px', alignItems: 'center', justifyContent: 'center' }}>
+                            <Button disabled={currentPage === 1 ? true : false} onClick={() => setCurrentPage(prev => prev - 1)}><StepBackwardOutlined /></Button>
+                            <Select onChange={value => setLimit(value)} defaultValue={5}>
+                                <Select.Option value={5}>5</Select.Option>
+                                <Select.Option value={10}>10</Select.Option>
+                                <Select.Option value={15}>15</Select.Option>
+                            </Select>
+                            <Button onClick={() => setCurrentPage(prev => prev + 1)} disabled={currentPage >= totalPages} ><StepForwardOutlined /></Button>
                         </div>
                     )}
                 />
