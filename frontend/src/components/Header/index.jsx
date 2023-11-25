@@ -26,7 +26,7 @@ const AppHeader = ({ setIsLoggin, isloggedIn }) => {
           try {
             const response = await axios.get(`${API_URL}/expense`, { headers: { 'Authorization': token } })
             if (response?.data) {
-              setExpenseReportData(response.data)
+              setExpenseReportData(response?.data?.expenses)
             }
           } catch (error) {
             message.error(error)
@@ -147,7 +147,7 @@ const AppHeader = ({ setIsLoggin, isloggedIn }) => {
             </div>
           }
         >
-          <ExpenseReport expenseReportData={expenseReportData} previousDonload={previousDonload}/>
+          <ExpenseReport expenseReportData={expenseReportData} previousDonload={previousDonload} />
         </Modal>
         : undefined}
     </>
