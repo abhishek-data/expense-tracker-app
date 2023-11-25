@@ -24,8 +24,8 @@ exports.signup = async (req, res, next) => {
     }
 }
 
-exports.generateAcessToken = (id, name, ispremiumUser) => {
-    return jwt.sign({ userId: id, name: name, ispremiumUser: ispremiumUser }, 'secretKey')
+exports.generateAcessToken = (id, email, ispremiumUser) => {
+    return jwt.sign({ userId: id, email: email, ispremiumUser: ispremiumUser }, secretKey, { expiresIn: '1h' });
 }
 
 exports.login = async (req, res, next) => {

@@ -49,7 +49,7 @@ exports.updatePayment = async (req, res, next) => {
         await order.update({ paymentid: payment_id, status: 'SUCCESSFUL' });
         await req.user.update({ ispremiumuser: true });
 
-        return res.status(202).json({ success: true, message: 'Transaction successful', token: authController.generateAcessToken(req.user.id, undefined, true) });
+        return res.status(202).json({ success: true, message: 'Transaction successful', token: authController.generateAcessToken(req.user.id, req.user.email, true) });
     } catch (error) {
         res.status(500).json({ message: 'Something went wrong', error: error.message });
     }
