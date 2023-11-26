@@ -44,7 +44,7 @@ exports.login = async (req, res, next) => {
         res.status(200).json({ message: 'You have sucessfully logged-in', token })
     } catch (err) {
         console.log(err);
-        res.status(500).json({ error: 'Internal server error' })
+        res.status(500).json({ error: 'Internal Server Error' })
     }
 }
 
