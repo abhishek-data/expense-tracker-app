@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import axios from 'axios'
 import { Button, Divider, Form, Input, Typography, message } from 'antd';
+import { ArrowLeftOutlined } from '@ant-design/icons';
 import { API_URL } from '../../utils/config';
 const Login = ({ setIsLoggin }) => {
 
@@ -57,6 +58,7 @@ const Login = ({ setIsLoggin }) => {
           </Divider>
         </Form>) :
         (<Form onFinish={forgotPasswordHandler}>
+          <Button type='primary' onClick={() => setHavePassword(true)} ><ArrowLeftOutlined /></Button>
           <Typography.Title className='loginTitle'>Forgot Password</Typography.Title>
           <Form.Item name='email' rules={[{ required: true, message: "Please Enter Valid Email" }]}>
             <Input placeholder='Enter Your Email' type='email' />
